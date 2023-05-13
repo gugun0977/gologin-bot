@@ -1,4 +1,4 @@
-name: Build Tunnel API V1.0.1
+name: Build GoLogin V1.0.1
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
 
     - name: Build
       run: |
-        go build -ldflags="-s -w" -o gologin ./src
+        go build -ldflags="-s -w" -o gologin .
         echo '{"version": "1.0.1", "name": "gologin", "build_time": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'", "commit_sha": "'$(git rev-parse --short HEAD)'"}' | jq '.' > build.json
       
     - name: Create Release
