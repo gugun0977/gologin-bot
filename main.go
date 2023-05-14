@@ -39,7 +39,7 @@ func main() {
 
 	for i := 0; i < jumlahIterasi; i++ {
 		// Membuat string acak dengan panjang maksimum 5 karakter
-		result := make([]rune, 5)
+		result := make([]rune, 8)
 		for i := range result {
 			result[i] = chars[rand.Intn(len(chars))]
 		}
@@ -61,7 +61,6 @@ func main() {
 		req.Header.Set("Referer", "https://app.gologin.com/")
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Gologin-Meta-Header", "site-win-10.0")
-		req.Header.Set("Content-Length", "305")
 		req.Header.Set("Origin", "https://app.gologin.com")
 		req.Header.Set("Sec-Fetch-Dest", "empty")
 		req.Header.Set("Sec-Fetch-Mode", "cors")
