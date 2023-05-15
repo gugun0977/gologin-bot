@@ -44,11 +44,13 @@ func main() {
 			result[i] = chars[rand.Intn(len(chars))]
 		}
 
+		getEmail := string(result) + "@socan.me"
+
 		tr := &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
 		client := &http.Client{Transport: tr}
-		var data = strings.NewReader(`{"email":"` + string(result) + `@gmail.com","password":"12345678","passwordConfirm":"12345678","googleClientId":"108461031.1683996431","filenameParserError":"","fromApp":false,"fromAppTrue":false,"canvasAndFontsHash":"af08e22b3d622379","affiliate":"","fontsHash":"763ae5c0520834ac","userOs":"lin","canvasHash":"681760097"}`)
+		var data = strings.NewReader(`{"email":"` + getEmail + `","password":"12345678","passwordConfirm":"12345678","googleClientId":"108461031.1683996431","filenameParserError":"","fromApp":false,"fromAppTrue":false,"canvasAndFontsHash":"af08e22b3d622379","affiliate":"","fontsHash":"763ae5c0520834ac","userOs":"lin","canvasHash":"681760097"}`)
 		req, err := http.NewRequest("POST", "https://api.gologin.com/user?free-plan=true", data)
 		if err != nil {
 			log.Fatal(err)
@@ -61,6 +63,7 @@ func main() {
 		req.Header.Set("Referer", "https://app.gologin.com/")
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Gologin-Meta-Header", "site-win-10.0")
+		// req.Header.Set("Content-Length", "305")
 		req.Header.Set("Origin", "https://app.gologin.com")
 		req.Header.Set("Sec-Fetch-Dest", "empty")
 		req.Header.Set("Sec-Fetch-Mode", "cors")
@@ -81,10 +84,43 @@ func main() {
 		if errUnmarshal != nil {
 			log.Fatal(errUnmarshal)
 		}
+		resultToken := token.IdToken
+		AnswerQuiz(resultToken)
 		// fmt.Printf("Token: %v\n", token.IdToken)
-		// fmt.Fprintln(file, string(result)+"@gmail.com:"+token.IdToken)
-		fmt.Fprintln(file, "Email Kamu : "+string(result)+"@gmail.com"+"\n"+"Password : 12345678\n")
-		fmt.Printf("Email Kamu : " + string(result) + "@gmail.com" + "\n" + "Password : 12345678\n")
+		fmt.Fprintln(file, "Email Kamu : "+getEmail+""+"\n"+"Password : 12345678\n")
+		fmt.Printf("Email Kamu : " + getEmail + "" + "\n" + "Password : 12345678\n")
 		// time.Sleep(time.Second * 10) // Menunggu selama 10 detik sebelum looping kembali
 	}
+}
+
+func AnswerQuiz(resultToken string) {
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr}
+	var data = strings.NewReader(`{"survey":"Gambling & Betting","teamMembers":5,"profiles":3001,"api":false,"from":"Forum Comments"}`)
+	req, err := http.NewRequest("PATCH", "https://api.gologin.com/user/quiz", data)
+	if err != nil {
+		log.Fatal(err)
+	}
+	req.Header.Set("Host", "api.gologin.com")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/113.0")
+	req.Header.Set("Accept", "*/*")
+	req.Header.Set("Accept-Language", "en-US,en;q=0.5")
+	// req.Header.Set("Accept-Encoding", "gzip, deflate")
+	req.Header.Set("Referer", "https://app.gologin.com/")
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+resultToken)
+	req.Header.Set("Gologin-Meta-Header", "site-win-10.0")
+	req.Header.Set("Content-Length", "99")
+	req.Header.Set("Origin", "https://app.gologin.com")
+	req.Header.Set("Sec-Fetch-Dest", "empty")
+	req.Header.Set("Sec-Fetch-Mode", "cors")
+	req.Header.Set("Sec-Fetch-Site", "same-site")
+	req.Header.Set("Te", "trailers")
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
 }
